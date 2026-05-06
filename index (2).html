@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Examen de Conocimientos</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --orange:#F97316;--orange-dk:#C2510C;--orange-lt:#FED7AA;
+  --green:#16A34A;--green-dk:#14532D;--green-lt:#DCFCE7;
+  --red:#DC2626;--red-dk:#7F1D1D;--red-lt:#FEE2E2;
+  --blue:#1D4ED8;--blue-lt:#DBEAFE;
+  --purple:#7C3AED;--purple-lt:#EDE9FE;
+  --yellow:#CA8A04;--yellow-lt:#FEF9C3;
+  --cream:#FFFBF5;--white:#FFFFFF;--border:#E7E5E4;
+  --text:#1C1917;--muted:#78716C;
+}
+html,body{height:100%;overflow:hidden;touch-action:manipulation;}
+body{font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--cream);color:var(--text);display:flex;align-items:stretch;justify-content:center;}
+.app{width:100%;max-width:680px;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+
+.screen{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;padding:24px 20px;transition:transform .35s ease,opacity .35s ease;overflow-y:auto;}
+.hidden{transform:translateX(100%);opacity:0;pointer-events:none;}
+.slide-left{transform:translateX(-100%);opacity:0;pointer-events:none;}
+
+/* ── WELCOME ── */
+#sw{align-items:center;justify-content:center;gap:20px;text-align:center;}
+.wicon{width:96px;height:96px;background:var(--orange-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:50px;}
+.wtitle{font-size:30px;font-weight:900;color:var(--orange-dk);line-height:1.2;}
+.wsub{font-size:17px;color:var(--muted);line-height:1.55;max-width:340px;}
+.day-counter{background:var(--purple-lt);color:var(--purple);border-radius:14px;padding:10px 18px;font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.type-section{width:100%;display:flex;flex-direction:column;gap:10px;}
+.sec-label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.type-btn{padding:18px 10px;border-radius:16px;border:3px solid var(--border);background:var(--white);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;font-family:inherit;}
+.type-btn.sel{border-color:var(--orange);background:var(--orange-lt);}
+.type-btn .ticon{font-size:34px;line-height:1;}
+.type-btn .tlabel{font-size:14px;font-weight:800;color:var(--text);line-height:1.3;text-align:center;}
+.big-btn{width:100%;padding:20px;border-radius:16px;background:var(--orange);color:#fff;border:none;font-family:inherit;font-size:20px;font-weight:900;cursor:pointer;transition:all .2s;}
+.big-btn:active{background:var(--orange-dk);transform:scale(.98);}
+.big-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* ── PARTICIPANT INFO ── */
+#si{gap:0;justify-content:center;}
+.info-header{text-align:center;margin-bottom:22px;}
+.ih-icon{font-size:44px;margin-bottom:10px;}
+.info-header h2{font-size:24px;font-weight:900;color:var(--orange-dk);}
+.info-header p{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5;}
+.fac-badge{display:inline-flex;align-items:center;gap:6px;background:var(--blue-lt);color:var(--blue);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;margin-bottom:20px;align-self:center;}
+.field-group{width:100%;display:flex;flex-direction:column;gap:14px;margin-bottom:22px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.field input{width:100%;padding:16px 18px;border-radius:12px;border:2px solid var(--border);background:var(--white);font-family:inherit;font-size:18px;font-weight:700;color:var(--text);outline:none;transition:border-color .2s;}
+.field input:focus{border-color:var(--orange);}
+.field input::placeholder{color:#C8BDB8;font-weight:400;}
+
+/* ── QUESTION ── */
+#sq{gap:0;padding:18px 18px 20px;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.prog-bar{flex:1;height:10px;background:var(--border);border-radius:10px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--orange);border-radius:10px;transition:width .5s ease;}
+.prog-txt{font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap;}
+.qcard{background:var(--white);border-radius:22px;padding:24px 20px;border:2px solid var(--border);margin-bottom:16px;flex:1;display:flex;flex-direction:column;gap:16px;min-height:0;transition:opacity .25s,transform .25s;}
+.qicon{font-size:52px;text-align:center;line-height:1;}
+.qtxt{font-size:21px;font-weight:700;line-height:1.55;text-align:center;color:var(--text);flex:1;display:flex;align-items:center;justify-content:center;}
+.audio-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:12px;border:2px solid var(--orange-lt);background:var(--orange-lt);color:var(--orange-dk);font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;align-self:center;}
+.audio-btn.talking{background:var(--orange);border-color:var(--orange);color:#fff;animation:pulse 1.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
+@keyframes pop-in{0%{transform:scale(.6);opacity:0;}70%{transform:scale(1.12);}100%{transform:scale(1);opacity:1;}}
+@keyframes fade-up{0%{transform:translateY(18px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
+@keyframes shimmer{0%,100%{opacity:1;}50%{opacity:.6;}}
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.ans-btn{padding:26px 10px;border-radius:18px;border:3px solid transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:all .18s;font-family:inherit;}
+.ans-btn.verd{background:var(--green-lt);border-color:#86EFAC;}
+.ans-btn.fals{background:var(--red-lt);border-color:#FCA5A5;}
+.ans-btn.verd.sel{background:var(--green);border-color:var(--green-dk);}
+.ans-btn.fals.sel{background:var(--red);border-color:var(--red-dk);}
+.ans-btn.verd.sel .asymb,.ans-btn.verd.sel .albl,.ans-btn.fals.sel .asymb,.ans-btn.fals.sel .albl{color:#fff;}
+.ans-btn.dim{opacity:.3;pointer-events:none;}
+.asymb{font-size:46px;line-height:1;font-weight:900;color:var(--green-dk);}
+.ans-btn.fals .asymb{color:var(--red-dk);}
+.albl{font-size:18px;font-weight:900;color:var(--text);}
+.next-btn{width:100%;padding:19px;border-radius:14px;background:var(--orange);color:#fff;border:none;font-family:inherit;font-size:19px;font-weight:900;cursor:pointer;transition:opacity .2s,transform .2s;opacity:0;transform:translateY(8px);pointer-events:none;}
+.next-btn.vis{opacity:1;transform:translateY(0);pointer-events:auto;}
+.next-btn:active{background:var(--orange-dk);transform:scale(.98);}
+
+/* ── CELEBRATION SCREEN ── */
+#sr{align-items:center;justify-content:flex-start;gap:0;padding-top:0;padding-bottom:0;padding-left:0;padding-right:0;overflow:hidden;}
+
+.celebration-bg{
+  width:100%;flex:1;
+  background:linear-gradient(160deg,#FFF7ED 0%,#FEF3C7 40%,#ECFDF5 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;padding:32px 28px;text-align:center;position:relative;overflow:hidden;
+}
+.confetti-row{position:absolute;top:0;left:0;right:0;height:6px;display:flex;}
+.confetti-row span{flex:1;height:100%;}
+
+.big-emoji{font-size:88px;line-height:1;margin-bottom:14px;animation:pop-in .6s ease forwards;}
+.congrats-name{font-size:22px;font-weight:900;color:var(--orange-dk);margin-bottom:10px;animation:fade-up .5s .2s both;}
+.motivation-card{
+  background:var(--white);border-radius:20px;
+  border:2px solid var(--orange-lt);
+  padding:22px 24px;margin-bottom:0;
+  animation:fade-up .5s .35s both;
+  max-width:480px;
+}
+.motivation-icon{font-size:30px;margin-bottom:10px;}
+.motivation-txt{font-size:18px;font-weight:700;line-height:1.6;color:var(--text);}
+
+.read-again-btn{
+  margin-top:18px;
+  display:flex;align-items:center;gap:8px;
+  padding:12px 22px;border-radius:12px;
+  border:2px solid var(--orange-lt);background:var(--orange-lt);
+  color:var(--orange-dk);font-family:inherit;font-size:15px;font-weight:800;
+  cursor:pointer;transition:all .2s;animation:fade-up .5s .5s both;
+}
+.read-again-btn:active{opacity:.7;}
+.read-again-btn.talking{background:var(--orange);border-color:var(--orange);color:#fff;animation:pulse 1.4s ease-in-out infinite;}
+
+/* Facilitator panel — tucked at bottom */
+.fac-panel{
+  width:100%;
+  background:var(--white);
+  border-top:2px solid var(--border);
+  padding:16px 20px 24px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.fac-panel-label{
+  font-size:11px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.1em;
+  display:flex;align-items:center;gap:6px;
+}
+.btn-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-action{padding:14px 10px;border-radius:14px;border:none;font-family:inherit;font-size:14px;font-weight:900;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-action:active{transform:scale(.97);opacity:.8;}
+.btn-restart{background:var(--orange);color:#fff;}
+.btn-excel{
+  width:100%;padding:15px;border-radius:14px;
+  background:var(--purple-lt);color:var(--purple);
+  border:2px solid #C4B5FD;font-family:inherit;
+  font-size:14px;font-weight:900;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-excel:active{opacity:.75;transform:scale(.98);}
+.excel-badge{background:var(--purple);color:#fff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:900;}
+.btn-txt{background:var(--blue-lt);color:var(--blue);border:2px solid #BFDBFE;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ WELCOME ══ -->
+<div id="sw" class="screen">
+  <div class="wicon">📚</div>
+  <div class="wtitle">Examen de<br>Conocimientos</div>
+  <div class="wsub">Las preguntas se leerán en voz alta.<br>Solo toca ✓ <b>Verdadero</b> o ✗ <b>Falso</b>.</div>
+  <div class="day-counter" id="day-counter" style="display:none">
+    📋 <span id="counter-txt">0 exámenes guardados hoy</span>
+  </div>
+  <div class="type-section">
+    <div class="sec-label">¿Cuál examen?</div>
+    <div class="type-grid">
+      <button class="type-btn" id="btn-nna" onclick="selExam('nna')">
+        <span class="ticon">👦👧</span>
+        <span class="tlabel">Jóvenes<br>(NNA)</span>
+      </button>
+      <button class="type-btn" id="btn-pmt" onclick="selExam('pmt')">
+        <span class="ticon">👨‍👩‍👧</span>
+        <span class="tlabel">Familias<br>(PMT)</span>
+      </button>
+    </div>
+  </div>
+  <button class="big-btn" id="go-btn" disabled onclick="goToInfo()">Continuar →</button>
+</div>
+
+<!-- ══ PARTICIPANT INFO ══ -->
+<div id="si" class="screen hidden">
+  <div class="info-header">
+    <div class="ih-icon">📋</div>
+    <h2>Datos del participante</h2>
+    <p>El facilitador completa esta sección<br>antes de entregar la tableta.</p>
+  </div>
+  <div class="fac-badge">✏️ Sección del facilitador</div>
+  <div class="field-group">
+    <div class="field">
+      <label>Nombre completo</label>
+      <input type="text" id="f-nombre" placeholder="Ej: María Rodríguez" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Edad</label>
+      <input type="number" id="f-edad" placeholder="Ej: 28" min="1" max="120" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label>Cédula / Documento</label>
+      <input type="text" id="f-cedula" placeholder="Ej: 001-0000000-0" autocomplete="off">
+    </div>
+  </div>
+  <button class="big-btn" onclick="startExam()">▶ Comenzar Examen</button>
+</div>
+
+<!-- ══ QUESTION ══ -->
+<div id="sq" class="screen hidden">
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="pfill"></div></div>
+    <div class="prog-txt" id="ptxt">1 / 10</div>
+  </div>
+  <div class="qcard" id="qcard">
+    <div class="qicon" id="qicon">❓</div>
+    <div class="qtxt" id="qtxt"></div>
+    <button class="audio-btn" id="abtn" onclick="replay()">
+      <span style="font-size:18px">🔊</span>
+      <span>Escuchar de nuevo</span>
+    </button>
+  </div>
+  <div class="ans-grid">
+    <button class="ans-btn verd" id="bv" onclick="pick('V')">
+      <div class="asymb">✓</div>
+      <div class="albl">VERDADERO</div>
+    </button>
+    <button class="ans-btn fals" id="bf" onclick="pick('F')">
+      <div class="asymb">✗</div>
+      <div class="albl">FALSO</div>
+    </button>
+  </div>
+  <button class="next-btn" id="nxt" onclick="advance()">Siguiente pregunta →</button>
+</div>
+
+<!-- ══ CELEBRATION ══ -->
+<div id="sr" class="screen hidden">
+
+  <div class="celebration-bg">
+    <!-- Rainbow confetti strip -->
+    <div class="confetti-row">
+      <span style="background:#F97316"></span><span style="background:#EAB308"></span>
+      <span style="background:#22C55E"></span><span style="background:#3B82F6"></span>
+      <span style="background:#A855F7"></span><span style="background:#EC4899"></span>
+      <span style="background:#F97316"></span><span style="background:#EAB308"></span>
+      <span style="background:#22C55E"></span><span style="background:#3B82F6"></span>
+    </div>
+
+    <div class="big-emoji" id="celeb-emoji">🌟</div>
+    <div class="congrats-name" id="congrats-name">¡Felicidades!</div>
+
+    <div class="motivation-card">
+      <div class="motivation-icon" id="motiv-icon">💪</div>
+      <div class="motivation-txt" id="motiv-txt">Cargando mensaje...</div>
+    </div>
+
+    <button class="read-again-btn" id="rbtn" onclick="readCelebration()">
+      <span style="font-size:18px">🔊</span>
+      <span>Escuchar de nuevo</span>
+    </button>
+  </div>
+
+  <!-- Facilitator zone -->
+  <div class="fac-panel">
+    <div class="fac-panel-label">
+      🔒 <span>Zona del facilitador</span>
+    </div>
+    <button class="btn-excel" onclick="downloadCSV()">
+      <span style="font-size:16px">📊</span>
+      <span>Descargar todos los exámenes del día</span>
+      <span class="excel-badge" id="excel-badge">1</span>
+    </button>
+    <div class="btn-row2">
+      <button class="btn-action btn-txt" onclick="downloadSingle()">
+        <span>💾</span><span>Este examen (.txt)</span>
+      </button>
+      <button class="btn-action btn-restart" onclick="restart()">
+        <span>🔄</span><span>Nuevo examen</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+/* ─────────── DATA ─────────── */
+const EXAMS={
+  nna:{
+    label:"Jóvenes (NNA)",
+    qs:[
+      {ic:"🧑",tx:"Las decisiones más importantes de la vida se toman cuando somos adultos.",ans:"F"},
+      {ic:"🎯",tx:"Es posible hacer un proyecto de vida siendo adolescente.",ans:"V"},
+      {ic:"📱",tx:"Enviar fotos o vídeos calientes es una práctica que puede meterte en problemas.",ans:"V"},
+      {ic:"👫",tx:"Evitar un embarazo es más una responsabilidad de la mujer que del hombre.",ans:"F"},
+      {ic:"💊",tx:"Tomando pastillas anticonceptivas evitas un embarazo y además contagiarte de alguna infección de transmisión sexual.",ans:"F"},
+      {ic:"⚖️",tx:"Se considera abuso y es penado por la ley que un joven de 19 años tenga relaciones sexuales con una adolescente de 16 años.",ans:"V"},
+      {ic:"🤰",tx:"Una mujer puede quedar embarazada en su primera relación sexual.",ans:"V"},
+      {ic:"❓",tx:"Si el hombre eyacula fuera de la vagina, es decir echa afuera el semen, la mujer no puede quedar embarazada.",ans:"F"},
+      {ic:"👶",tx:"Mientras más joven tienes tus hijos, mejor. Así sales de eso.",ans:"F"},
+      {ic:"💍",tx:"Casarse o unirse temprano es por lo general una buena opción para salir de la pobreza.",ans:"F"}
+    ]
+  },
+  pmt:{
+    label:"Familias (PMT)",
+    qs:[
+      {ic:"🤚",tx:"Las pelas sólo deben utilizarse cuando el niño, niña o adolescente haga algo muy malo.",ans:"F"},
+      {ic:"🤚",tx:"Una pela a tiempo evita muchos problemas en el futuro.",ans:"F"},
+      {ic:"⚠️",tx:"Se puede abusar sexualmente de un niño, niña o adolescente sin tocarlo.",ans:"V"},
+      {ic:"🤝",tx:"Si le das mucha confianza a tus hijos e hijas, al final no te respetarán.",ans:"F"},
+      {ic:"🤱",tx:"Es bueno atender todas las necesidades de los niños y las niñas: cargarlos, consolarlos y escucharlos cada vez que lo necesiten.",ans:"V"},
+      {ic:"🚬",tx:"La curiosidad por el alcohol, los cigarrillos y las drogas son cosas de la adolescencia. Por lo general los jóvenes lo dejan cuando maduran.",ans:"F"},
+      {ic:"👨",tx:"Un hombre podría cuidar un niño o una niña igual o hasta mejor que una mujer.",ans:"V"},
+      {ic:"🔬",tx:"Es normal que los niños y las niñas exploren su cuerpo desde pequeños.",ans:"V"},
+      {ic:"💬",tx:"Si le hablamos de sexualidad a nuestros hijos podemos ponerlos en lo que no están.",ans:"F"},
+      {ic:"📖",tx:"Es importante enseñar a nuestros hijos desde pequeños los nombres correctos de todas las partes del cuerpo, incluidas las íntimas.",ans:"V"}
+    ]
+  }
+};
+
+/* ─────────── MESSAGES ─────────── */
+const MESSAGES=[
+  {
+    emoji:"🌟",
+    icon:"🌱",
+    titulo:"¡Lo lograste!",
+    texto:"Cada pregunta que respondiste hoy es una semilla de conocimiento. Aprender sobre estos temas te hace más fuerte y protege a tu familia. ¡Estás haciendo algo increíble!",
+    audio:"¡Lo lograste! Cada pregunta que respondiste hoy es una semilla de conocimiento. Aprender sobre estos temas te hace más fuerte y protege a tu familia. ¡Estás haciendo algo increíble!"
+  },
+  {
+    emoji:"🏆",
+    icon:"❤️",
+    titulo:"¡Eres valiente!",
+    texto:"Atreverse a aprender cosas nuevas toma valentía. Hoy demostraste que te importa tu bienestar y el de los tuyos. Tu comunidad es más fuerte gracias a personas como tú.",
+    audio:"¡Eres valiente! Atreverse a aprender cosas nuevas toma valentía. Hoy demostraste que te importa tu bienestar y el de los tuyos. Tu comunidad es más fuerte gracias a personas como tú."
+  },
+  {
+    emoji:"🎉",
+    icon:"🌈",
+    titulo:"¡Felicidades!",
+    texto:"Participar en este programa es una señal de que quieres un futuro mejor para ti y para los que amas. El conocimiento que tienes hoy ya es tuyo para siempre. ¡Sigue adelante!",
+    audio:"¡Felicidades! Participar en este programa es una señal de que quieres un futuro mejor para ti y para los que amas. El conocimiento que tienes hoy ya es tuyo para siempre. ¡Sigue adelante!"
+  },
+  {
+    emoji:"💫",
+    icon:"🦋",
+    titulo:"¡Qué orgullos@!",
+    texto:"Hoy diste un paso importante. Informarse es la mejor forma de cuidarse. Recuerda: nunca es tarde para aprender, y tú lo estás demostrando con cada día que pasa.",
+    audio:"¡Qué orgulloso! Hoy diste un paso importante. Informarse es la mejor forma de cuidarse. Recuerda: nunca es tarde para aprender, y tú lo estás demostrando con cada día que pasa."
+  }
+];
+
+// Track last used message index to avoid consecutive repeats
+let lastMsgIdx=-1;
+
+function pickMessage(){
+  let idx;
+  do { idx=Math.floor(Math.random()*MESSAGES.length); }
+  while(idx===lastMsgIdx && MESSAGES.length>1);
+  lastMsgIdx=idx;
+  return MESSAGES[idx];
+}
+
+/* ─────────── STATE ─────────── */
+let examType=null,qIdx=0,answers=[],picked=null,voices=[];
+let participant={nombre:'',edad:'',cedula:''};
+let allExams=[];
+let lastResult=null;
+let currentMsg=null;
+
+/* ─────────── SPEECH ─────────── */
+const loadVoices=()=>{voices=window.speechSynthesis.getVoices();};
+window.speechSynthesis.onvoiceschanged=loadVoices;
+loadVoices();
+
+function speak(txt,btnId){
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(txt);
+  const v=voices.find(x=>x.lang.startsWith('es-DO'))||
+           voices.find(x=>x.lang.startsWith('es-MX'))||
+           voices.find(x=>x.lang.startsWith('es'));
+  if(v)u.voice=v;
+  u.lang='es-DO';u.rate=0.82;u.pitch=1;u.volume=1;
+  const ids=btnId?[btnId]:['abtn'];
+  ids.forEach(id=>{const b=document.getElementById(id);if(b)b.classList.add('talking');});
+  const done=()=>ids.forEach(id=>{const b=document.getElementById(id);if(b)b.classList.remove('talking');});
+  u.onend=done;u.onerror=done;
+  window.speechSynthesis.speak(u);
+}
+
+/* ─────────── WELCOME ─────────── */
+function selExam(t){
+  examType=t;
+  document.getElementById('btn-nna').classList.toggle('sel',t==='nna');
+  document.getElementById('btn-pmt').classList.toggle('sel',t==='pmt');
+  document.getElementById('go-btn').disabled=false;
+}
+
+function goToInfo(){
+  if(!examType)return;
+  document.getElementById('sw').classList.add('slide-left');
+  document.getElementById('si').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('f-nombre').focus(),420);
+}
+
+/* ─────────── INFO ─────────── */
+function startExam(){
+  participant.nombre=(document.getElementById('f-nombre').value||'Participante').trim();
+  participant.edad=(document.getElementById('f-edad').value||'').trim();
+  participant.cedula=(document.getElementById('f-cedula').value||'').trim();
+  qIdx=0;answers=[];picked=null;
+  document.getElementById('si').classList.add('slide-left');
+  document.getElementById('sq').classList.remove('hidden');
+  setTimeout(()=>showQ(0),150);
+}
+
+/* ─────────── QUESTION ─────────── */
+function showQ(i){
+  const q=EXAMS[examType].qs[i];
+  const total=EXAMS[examType].qs.length;
+  document.getElementById('pfill').style.width=((i/total)*100)+'%';
+  document.getElementById('ptxt').textContent=(i+1)+' / '+total;
+  document.getElementById('qicon').textContent=q.ic;
+  document.getElementById('qtxt').textContent=q.tx;
+  picked=null;
+  ['bv','bf'].forEach(id=>{const b=document.getElementById(id);b.classList.remove('sel','dim');b.style.pointerEvents='';});
+  document.getElementById('nxt').classList.remove('vis');
+  setTimeout(()=>speak(`Pregunta ${i+1} de ${total}. ${q.tx} ¿Es verdadero o falso?`),350);
+}
+
+function replay(){
+  if(!examType)return;
+  speak(`${EXAMS[examType].qs[qIdx].tx} ¿Es verdadero o falso?`);
+}
+
+function pick(val){
+  if(picked!==null)return;
+  picked=val;
+  answers.push(val);
+  document.getElementById('bv').classList.toggle('sel',val==='V');
+  document.getElementById('bv').classList.toggle('dim',val!=='V');
+  document.getElementById('bf').classList.toggle('sel',val==='F');
+  document.getElementById('bf').classList.toggle('dim',val!=='F');
+  document.getElementById('bv').style.pointerEvents='none';
+  document.getElementById('bf').style.pointerEvents='none';
+  speak(`Seleccionaste: ${val==='V'?'Verdadero':'Falso'}.`);
+  // ★ Botón aparece a los 900ms sin bloquear el audio
+  setTimeout(()=>{
+    const nb=document.getElementById('nxt');
+    const isLast=qIdx===EXAMS[examType].qs.length-1;
+    nb.textContent=isLast?'✓ Finalizar':'Siguiente pregunta →';
+    nb.classList.add('vis');
+  },900);
+}
+
+function advance(){
+  const total=EXAMS[examType].qs.length;
+  if(qIdx<total-1){
+    qIdx++;
+    const c=document.getElementById('qcard');
+    c.style.opacity='0';c.style.transform='translateX(-22px)';
+    setTimeout(()=>{
+      showQ(qIdx);
+      c.style.transition='none';c.style.opacity='0';c.style.transform='translateX(22px)';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        c.style.transition='opacity .28s,transform .28s';
+        c.style.opacity='1';c.style.transform='translateX(0)';
+      }));
+    },220);
+  } else { showResults(); }
+}
+
+/* ─────────── RESULTS ─────────── */
+function showResults(){
+  window.speechSynthesis.cancel();
+  const exam=EXAMS[examType];
+  let score=0;
+  const correctas=exam.qs.map((q,i)=>answers[i]===q.ans);
+  correctas.forEach(c=>{if(c)score++;});
+  const pct=Math.round((score/exam.qs.length)*100);
+
+  // Store completed exam
+  const now=new Date();
+  lastResult={
+    fecha:now.toLocaleDateString('es-DO',{year:'numeric',month:'2-digit',day:'2-digit'}),
+    hora:now.toLocaleTimeString('es-DO',{hour:'2-digit',minute:'2-digit'}),
+    tipo:exam.label,
+    nombre:participant.nombre,
+    edad:participant.edad,
+    cedula:participant.cedula,
+    puntaje:score,
+    total:exam.qs.length,
+    pct:pct,
+    respuestas:answers.slice(),
+    correctas:correctas,
+    preguntas:exam.qs
+  };
+  allExams.push(lastResult);
+
+  // Pick random motivational message
+  currentMsg=pickMessage();
+  const nombre=participant.nombre||'';
+  const tituloPersonal=nombre && nombre!=='Participante'
+    ? currentMsg.titulo+' '+nombre.split(' ')[0]+'!'
+    : currentMsg.titulo;
+
+  document.getElementById('celeb-emoji').textContent=currentMsg.emoji;
+  document.getElementById('congrats-name').textContent=tituloPersonal;
+  document.getElementById('motiv-icon').textContent=currentMsg.icon;
+  document.getElementById('motiv-txt').textContent=currentMsg.texto;
+  document.getElementById('excel-badge').textContent=allExams.length;
+
+  document.getElementById('sq').classList.add('slide-left');
+  document.getElementById('sr').classList.remove('hidden');
+
+  // Auto-read celebration message
+  setTimeout(()=>readCelebration(),600);
+  updateCounter();
+}
+
+function readCelebration(){
+  if(!currentMsg)return;
+  const nombre=participant.nombre||'';
+  const primerNombre=nombre && nombre!=='Participante' ? nombre.split(' ')[0] : '';
+  const intro=primerNombre ? `${primerNombre}, ` : '';
+  speak(intro+currentMsg.audio,'rbtn');
+}
+
+/* ─────────── DOWNLOADS ─────────── */
+function fmtDate(){
+  const d=new Date();
+  return d.toLocaleDateString('es-DO',{year:'numeric',month:'2-digit',day:'2-digit'})+
+    ' '+d.toLocaleTimeString('es-DO',{hour:'2-digit',minute:'2-digit'});
+}
+
+function csvCell(v){
+  return '"'+String(v===null||v===undefined?'':v).replace(/"/g,'""')+'"';
+}
+
+function downloadCSV(){
+  if(!allExams.length)return;
+  const headers=['Fecha','Hora','Tipo de Examen','Nombre','Edad','Cédula','Puntaje','Porcentaje (%)'];
+  for(let i=1;i<=10;i++) headers.push(`P${i} - Respuesta`,`P${i} - Resultado`);
+  const rows=[headers.map(csvCell).join(',')];
+  allExams.forEach(e=>{
+    const row=[e.fecha,e.hora,e.tipo,e.nombre,e.edad||'',e.cedula||'',e.puntaje,e.pct+'%'];
+    for(let i=0;i<10;i++){
+      row.push(e.respuestas[i]==='V'?'Verdadero':'Falso');
+      row.push(e.correctas[i]?'Correcta':'Incorrecta');
+    }
+    rows.push(row.map(csvCell).join(','));
+  });
+  const csv='\uFEFF'+rows.join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`Examenes_del_dia_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function downloadSingle(){
+  if(!lastResult)return;
+  const e=lastResult;
+  let txt='=================================================\n';
+  txt+='      EXAMEN DE CONOCIMIENTOS — RESULTADO\n';
+  txt+='=================================================\n\n';
+  txt+=`Fecha y hora   : ${fmtDate()}\n`;
+  txt+=`Tipo de examen : ${e.tipo}\n\n`;
+  txt+='─── DATOS DEL PARTICIPANTE ───────────────────────\n';
+  txt+=`Nombre         : ${e.nombre}\n`;
+  txt+=`Edad           : ${e.edad||'No registrada'}\n`;
+  txt+=`Cédula         : ${e.cedula||'No registrada'}\n\n`;
+  txt+='─── RESULTADO FINAL ──────────────────────────────\n';
+  txt+=`Puntaje        : ${e.puntaje} de ${e.total} correctas (${e.pct}%)\n\n`;
+  txt+='─── DETALLE POR PREGUNTA ─────────────────────────\n';
+  e.preguntas.forEach((q,i)=>{
+    const ok=e.correctas[i];
+    const al=e.respuestas[i]==='V'?'VERDADERO':'FALSO';
+    const correcta=q.ans==='V'?'VERDADERO':'FALSO';
+    txt+=`P${String(i+1).padStart(2,'0')} | Respondió: ${al.padEnd(10)} | Correcta: ${correcta.padEnd(10)} | ${ok?'✓ CORRECTA':'✗ INCORRECTA'}\n`;
+    txt+=`     ${q.tx}\n\n`;
+  });
+  txt+='=================================================\n';
+  txt+='Generado por el sistema de evaluación de la ONG\n';
+  txt+='=================================================\n';
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const safeN=e.nombre.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 ]/g,'').replace(/ /g,'_').substring(0,30);
+  a.href=url;
+  a.download=`Examen_${safeN}_${new Date().toISOString().slice(0,10)}.txt`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ─────────── HELPERS ─────────── */
+function updateCounter(){
+  const ctr=document.getElementById('day-counter');
+  const txt=document.getElementById('counter-txt');
+  if(allExams.length>0){
+    ctr.style.display='flex';
+    txt.textContent=allExams.length+' examen'+(allExams.length!==1?'es':'')+
+      ' guardado'+(allExams.length!==1?'s':'')+' hoy';
+  }
+}
+
+function restart(){
+  window.speechSynthesis.cancel();
+  examType=null;qIdx=0;answers=[];picked=null;currentMsg=null;
+  participant={nombre:'',edad:'',cedula:''};
+  ['f-nombre','f-edad','f-cedula'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('btn-nna').classList.remove('sel');
+  document.getElementById('btn-pmt').classList.remove('sel');
+  document.getElementById('go-btn').disabled=true;
+  document.getElementById('sr').classList.add('hidden');
+  document.getElementById('sq').classList.remove('slide-left');
+  document.getElementById('sq').classList.add('hidden');
+  document.getElementById('si').classList.remove('slide-left');
+  document.getElementById('si').classList.add('hidden');
+  document.getElementById('sw').classList.remove('slide-left');
+  updateCounter();
+}
+</script>
+</body>
+</html>
